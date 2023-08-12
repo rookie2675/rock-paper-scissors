@@ -1,4 +1,5 @@
 import random
+import os
 from enum import Enum
 
 
@@ -8,49 +9,54 @@ class Move(Enum):
     Scissors = 3
 
 
-for data in Move:
-    print(f'{data.value}. {data.name}')
+def clear_screen():
+    if os.name == 'nt':
+        _ = os.system('clear')
 
-userMove = None
-while userMove is None:
-    userInput = input("Please choose one of the options above: ")
 
-    if userInput == "1":
-        userMove = Move.Rock
+def get_user_move():
+    while True:
+        try:
+            user_input = int(input("Please choose one of the options above: "))
+            return Move(user_input)
+        except (ValueError, KeyError):
+            print("Invalid input. Please choose 1, 2, or 3.")
 
-    elif userInput == "2":
-        userMove = Move.Paper
 
-    elif userInput == "3":
-        userMove = Move.Scissors
-else:
-    moves = list(Move)
-    computerMove = random.choice(moves)
+def determine_winner(user_move, computer_move):
+    if user_move == computer_move:
+        return "draw"
+    elif (user_move, computer_move) in [(Move.Rock, Move.Scissors), (Move.Paper, Move.Rock), (Move.Scissors, Move.Paper)]:
+        return "user"
+    else:
+        return "computer"
 
-    print()
-    print("Your choice: " + userMove.name)
-    print("Computer choice: " + computerMove.name)
 
-    wonMessage = "You won!"
-    lossMessage = "You lost"
+def play_game():
+    while True:
+        for data in Move:
+            print(f'{data.value}. {data.name}')
 
-    if userMove == computerMove:
-        print("The game has ended in a draw.")
+        user_move = get_user_move()
+        computer_move = random.choice(list(Move))
 
-    elif userMove == Move.Rock:
-        if computerMove == Move.Scissors:
-            print(wonMessage)
-        elif computerMove == Move.Paper:
-            print(lossMessage)
+        print("\nYour choice:", user_move.name)
+        print("Computer choice:", computer_move.name)
 
-    elif userMove == Move.Paper:
-        if computerMove == Move.Rock:
-            print(wonMessage)
-        elif userMove == Move.Scissors:
-            print(lossMessage)
+        result = determine_winner(user_move, computer_move)
 
-    elif userMove == Move.Scissors:
-        if computerMove == Move.Paper:
-            print(wonMessage)
-        elif computerMove == Move.Rock:
-            print(lossMessage)
+        if result == "draw":
+            print("The game has ended in a draw.")
+        else:
+            print("You won!" if result == "user" else "You lost")
+
+        play_again = input("\nDo you wish to play again? [Y/N]: ")
+
+        if play_again.upper() != 'Y':
+            break
+
+        clear_screen()
+
+
+if __name__ == "__main__":
+    play_game()
