@@ -33,7 +33,9 @@ def determine_winner(user_move, computer_move):
 
 
 def play_game():
-    while True:
+    is_running = True
+
+    while is_running:
         for data in Move:
             print(f'{data.value}. {data.name}')
 
@@ -50,11 +52,15 @@ def play_game():
         else:
             print("You won!" if result == "user" else "You lost")
 
-        play_again = input("\nDo you wish to play again? [Y/N]: ")
+        play_again = None;
 
-        if play_again.upper() != 'Y':
-            break
+        while play_again not in ['N', 'Y']:
+            play_again = input("Do you wish to play again? [Y/N]: ").upper()
 
+            if play_again == 'N':
+                is_running = False
+
+        print()
         clear_screen()
 
 
